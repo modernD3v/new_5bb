@@ -2,6 +2,3 @@ node_modules
 .next
 coverage
 dist
-pnpm-lock.yaml
-drizzle/meta
-*.md
