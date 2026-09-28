@@ -1,3 +1,5 @@
+import Link from "next/link";
+
 export default function Home() {
   return (
     <main className="relative flex flex-1 flex-col items-center justify-center overflow-hidden px-6 py-24 text-center">
@@ -14,16 +16,24 @@ export default function Home() {
         </h1>
         <p className="text-base leading-relaxed text-zinc-300">
           Helping snowboarders in the five boroughs cut travel costs and make
-          new friends. Phase 0 scaffold is up — Snow Board map lands in Phase 1.
+          new friends.
         </p>
-        <a
-          className="inline-flex h-9 items-center justify-center rounded-lg bg-sky-300 px-4 text-sm font-medium text-zinc-950 transition hover:bg-sky-200"
-          href="https://www.instagram.com/5boroughboarders/"
-          target="_blank"
-          rel="noreferrer"
-        >
-          Instagram
-        </a>
+        <div className="flex flex-wrap items-center justify-center gap-3">
+          <Link
+            href="/board"
+            className="inline-flex h-9 items-center justify-center rounded-lg bg-sky-300 px-4 text-sm font-medium text-zinc-950 transition hover:bg-sky-200"
+          >
+            Open Snow Board
+          </Link>
+          <a
+            className="inline-flex h-9 items-center justify-center rounded-lg border border-zinc-600 px-4 text-sm font-medium text-zinc-200 transition hover:bg-zinc-800"
+            href="https://www.instagram.com/5boroughboarders/"
+            target="_blank"
+            rel="noreferrer"
+          >
+            Instagram
+          </a>
+        </div>
       </div>
     </main>
   );

@@ -4,18 +4,27 @@ NYC snowboarding community site. Build plan: [`docs/PLAN.md`](docs/PLAN.md).
 
 ## Stack
 
-Next.js (App Router) · TypeScript · Tailwind · shadcn/ui · Neon Postgres · Drizzle · Vitest · pnpm
+Next.js (App Router) · TypeScript · Tailwind · shadcn/ui · Neon Postgres · Drizzle · Leaflet · Vitest · pnpm
 
-## Local setup (after Neon is ready)
+## Cursor Cloud / Vercel
+
+`DATABASE_URL` (pooled) and `DATABASE_URL_UNPOOLED` (direct) are environment **secrets**.
+Never commit connection strings. Auth is Auth.js later — ignore Neon Auth vars.
+
+Vercel / `pnpm build` runs:
+
+```bash
+pnpm db:migrate && pnpm db:seed:mountains && next build
+```
+
+(`vercel.json` uses the same sequence via `build:next`.) Migrations prefer `DATABASE_URL_UNPOOLED`.
 
 ```bash
 pnpm install
-cp .env.example .env.local
-# Put your Neon *dev* branch DATABASE_URL in .env.local
-# or run: pnpm db:neon-dev   (requires neonctl auth)
-
 pnpm db:migrate
-pnpm db:seed
+pnpm db:seed:mountains
+pnpm test
+pnpm build:next   # or pnpm build (includes migrate+seed)
 pnpm dev
 ```
 
@@ -24,14 +33,19 @@ pnpm dev
 | Script | Purpose |
 |---|---|
 | `pnpm dev` | Next.js dev server |
-| `pnpm test` | Vitest |
-| `pnpm db:generate` | Create Drizzle SQL migration from schema |
-| `pnpm db:migrate` | Apply migrations (**dev branch only**) |
-| `pnpm db:seed` | Upsert 10 mountains |
-| `pnpm db:neon-dev` | Create/use Neon `dev` branch and write `DATABASE_URL` |
+| `pnpm build` | Migrate + seed mountains + Next build |
+| `pnpm build:next` | Next build only |
+| `pnpm test` | Vitest (scoring fixtures + refresh lock) |
+| `pnpm db:migrate` | Apply migrations (prefers `DATABASE_URL_UNPOOLED`) |
+| `pnpm db:seed` / `db:seed:mountains` | Idempotent mountain upsert on `slug` |
+
+## Phase status
+
+- **Phase 0** — setup ✅
+- **Phase 1** — weekend scores + `/board` + `/mountains/[slug]`
 
 ## Rules
 
-- Local migrations always target the Neon **`dev`** branch — never production.
+- Migrations/seed target Neon **`dev`** for Cloud work — never point local tooling at production by accident.
 - Shop is gated by `SHOP_ENABLED` (default `false`).
-- Full phase plan lives in `docs/PLAN.md` — follow that over any shorter summary.
+- Full phase plan lives in `docs/PLAN.md`.

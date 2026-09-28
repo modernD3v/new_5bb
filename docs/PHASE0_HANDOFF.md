@@ -1,66 +1,48 @@
-# Phase 0 handoff — what you do by hand
+# Phase 0 handoff — Cursor Cloud + Neon `dev`
 
-The repo scaffolds the app, schema, seed, Vitest, and Neon *dev-branch* helper.
-You still need to wire hosting and secrets once.
+This project runs on **Cursor Cloud Agents**. Neon connection strings are injected
+as **environment secrets** — never commit them, never write them into the repo.
 
-## 1. Neon Postgres
+Auth is **Auth.js** (NextAuth v5) in a later phase. Ignore Neon Auth env vars.
 
-1. Create a Neon project (or use the one from the Vercel Neon integration in step 2).
-2. Note the **production** branch connection string — this is for Vercel Production only.
-3. Authenticate the CLI locally:
-   ```bash
-   pnpm dlx neonctl auth
-   ```
-4. Optional: put `NEON_PROJECT_ID=...` in `.env.local`.
-5. Create/use the isolated **dev** branch and write `DATABASE_URL`:
-   ```bash
-   pnpm db:neon-dev
-   ```
-   This creates a branch named `dev` parented on `production` (if missing) and
-   overwrites `DATABASE_URL` in `.env.local` with the **pooled** `dev` connection string.
-6. Apply schema + seed against **dev only**:
-   ```bash
-   pnpm db:migrate
-   pnpm db:seed
-   ```
-7. Confirm in the Neon console that migrations landed on branch `dev`, not `production`.
+## 1. Database secrets
 
-If `neonctl` parent branch is not named `production` in your project, edit
-`scripts/setup-neon-dev.sh` (`--parent`) to match, or create the `dev` branch
-in the Neon UI and paste its connection string into `.env.local` manually.
+| Secret | Purpose |
+|---|---|
+| `DATABASE_URL` | Pooled Neon URL — app runtime + seed |
+| `DATABASE_URL_UNPOOLED` | Direct Neon URL — `pnpm db:migrate` (drizzle-kit) |
 
-## 2. Vercel project
+`drizzle.config.ts` prefers `DATABASE_URL_UNPOOLED`, then `DATABASE_URL`.
 
-1. Import this GitHub repo into Vercel.
-2. Framework preset: Next.js. Install command: `pnpm install`. Build: `pnpm build`.
-3. Add the **Neon** integration (or paste `DATABASE_URL`) for Preview + Production.
-   - **Production** env: production branch connection string.
-   - **Preview** env: prefer a `preview` Neon branch (or temporarily the `dev` branch).
-4. Set at least:
-   ```
-   DATABASE_URL=...
-   NEXT_PUBLIC_SITE_URL=https://<your-vercel-domain>
-   SHOP_ENABLED=false
-   ```
-5. Deploy. Empty Phase 0 home page should load.
-
-Leave Auth / Resend / Stripe / Blob vars blank until later phases — keys are listed in `.env.example`.
-
-## 3. Brand asset
-
-Drop the circular B&W logo into:
-
-```
-public/brand/logo.svg   # or .png
-```
-
-## 4. Sanity checks after you finish Neon
+Skip `neonctl` / `pnpm db:neon-dev` on Cloud Agents.
 
 ```bash
-pnpm test
-pnpm db:migrate && pnpm db:seed
-pnpm build
-pnpm dev
+pnpm db:migrate
+pnpm db:seed:mountains
 ```
 
-Phase 0 is done when: empty site deploys, `pnpm db:migrate` and `pnpm db:seed` work against the Neon **dev** branch.
+Vercel build also runs migrate + `db:seed:mountains` automatically (`vercel.json` / `pnpm build`).
+
+## 2. Vercel
+
+1. Import the GitHub repo.
+2. Install: `pnpm install`. Build command comes from `vercel.json`.
+3. Set `DATABASE_URL`, `DATABASE_URL_UNPOOLED`, `NEXT_PUBLIC_SITE_URL`, `SHOP_ENABLED=false`.
+4. Production → Neon production branch; Preview → `dev` or a preview branch.
+
+## 3. Brand
+
+```
+public/brand/logo.svg
+```
+
+## 4. Phase 0 acceptance
+
+- [x] Scaffold + Vitest + plan docs
+- [x] Drizzle schema + migration
+- [x] Verified mountain seed
+- [x] `pnpm db:migrate` / `pnpm db:seed:mountains` on Neon `dev`
+- [x] `pnpm test` + `pnpm build`
+- [ ] Optional: production Vercel domain
+
+**Phase 0 complete. Phase 1 (scores + map) follows `docs/PLAN.md` §§7–8.**
