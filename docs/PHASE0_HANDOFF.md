@@ -62,9 +62,9 @@ public/brand/logo.svg   # or .png
 - [x] Full plan in `docs/PLAN.md`
 - [x] Drizzle schema + migration generated
 - [x] Mountain seed data verified with source comments
-- [ ] `pnpm db:migrate` against Neon **`dev`**
-- [ ] `pnpm db:seed` — 10 rows in `mountains`
-- [ ] `pnpm test` and `pnpm build` still green
-- [ ] Site deploys on Vercel (optional for starting Phase 1 once migrate/seed pass)
+- [x] `pnpm db:migrate` against Neon **`dev`** (via `DATABASE_URL_UNPOOLED`)
+- [x] `pnpm db:seed` — 10 rows in `mountains`
+- [x] `pnpm test` and `pnpm build` still green
+- [ ] Site deploys on Vercel (optional for starting Phase 1; migrate/seed already pass)
 
-**Do not start Phase 1 until migrate + seed have been confirmed against `dev`.**
+**Phase 0 migrate + seed confirmed against Neon `dev`. Ready for Phase 1 when you say go.**
