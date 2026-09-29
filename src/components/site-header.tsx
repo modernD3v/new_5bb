@@ -30,7 +30,8 @@ export function SiteHeader({ transparent = false }: { transparent?: boolean }) {
             className="h-11 w-11 shrink-0 md:h-14 md:w-14"
             decoding="async"
           />
-          <span className="text-[15px] font-medium tracking-wide text-white md:text-base">
+          {/* Hide wordmark under 640px so badge + Board/Crew/Join stay one row */}
+          <span className="sr-only sm:not-sr-only sm:inline sm:text-[15px] sm:font-medium sm:tracking-wide sm:text-white md:text-base">
             Five Borough Boarders
           </span>
         </Link>
