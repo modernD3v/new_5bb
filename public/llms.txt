@@ -1,0 +1,32 @@
+# Five Borough Boarders
+
+Five Borough Boarders is a NYC snowboarding community for riders in all five boroughs. We help people cut travel costs, share rides, find weekend snow, and make new friends.
+
+## Who it's for
+
+Snowboarders (and ski friends who hang with boarders) who live in Manhattan, Brooklyn, Queens, the Bronx, or Staten Island and want an easier path to the mountains.
+
+## What you can do on the site
+
+- Home (/) — community intro and this weekend's snow CTA
+- Snow Board (/board) — map + ranked list of mountains with weekend scores
+- Mountain pages (/mountains/[slug]) — score, reasons, Fri–Sun forecast
+- Crew (/crew) — about the community and photo credits
+- Join (/join) — email list signup
+- FAQ (/faq) — common questions
+- Trips (/trips) — upcoming meetups (coming soon; RSVP via Partiful)
+- Catch a Ride (/rides) — member carpools (members only)
+
+## How the weekend snow score works
+
+Each outdoor mountain gets a 1–10 weekend score from Open-Meteo forecasts: recent and weekend snowfall, daytime temps, rain, cold nights for snowmaking, and wind gusts. Indoor Big Snow skips the outdoor score and is labeled always on. Scores refresh on demand with about a 40-minute freshness window.
+
+## Key links
+
+- https://5boroughboarders.com/
+- https://5boroughboarders.com/board
+- https://5boroughboarders.com/faq
+- https://5boroughboarders.com/join
+- https://5boroughboarders.com/crew
+- https://5boroughboarders.com/llms.txt
+- https://www.instagram.com/5boroughboarders

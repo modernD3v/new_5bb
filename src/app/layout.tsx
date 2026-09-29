@@ -1,5 +1,14 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono, Bebas_Neue } from "next/font/google";
+import { JsonLd } from "@/components/seo/json-ld";
+import {
+  DEFAULT_DESCRIPTION,
+  SITE_NAME,
+  buildMetadata,
+  getSiteUrl,
+  organizationJsonLd,
+  websiteJsonLd,
+} from "@/lib/seo";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -18,10 +27,21 @@ const display = Bebas_Neue({
   variable: "--font-display",
 });
 
+const rootMeta = buildMetadata({
+  title: SITE_NAME,
+  description: DEFAULT_DESCRIPTION,
+  path: "/",
+  absoluteTitle: true,
+});
+
 export const metadata: Metadata = {
-  title: "Five Borough Boarders",
-  description:
-    "Helping the snowboarding community in the 5 boroughs of NYC cut costs on travel and make new friends.",
+  ...rootMeta,
+  metadataBase: new URL(getSiteUrl()),
+  title: {
+    default: SITE_NAME,
+    template: `%s | ${SITE_NAME}`,
+  },
+  description: DEFAULT_DESCRIPTION,
   icons: {
     icon: [{ url: "/favicon.ico" }],
     apple: [{ url: "/apple-icon.png" }],
@@ -40,6 +60,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
     >
       <body className="flex min-h-full flex-col bg-[#0A0A0A] text-white">
         {children}
+        <JsonLd data={[organizationJsonLd(), websiteJsonLd()]} />
       </body>
     </html>
   );

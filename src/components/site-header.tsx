@@ -20,17 +20,17 @@ export function SiteHeader({ transparent = false }: { transparent?: boolean }) {
           href="/"
           className="flex items-center gap-3 rounded-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#7DD3FC]"
         >
-          {/* Real traced badge — plain img avoids next/image re-encode of SVG */}
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
             src="/brand/logo-badge.svg"
-            alt=""
+            alt="Five Borough Boarders logo badge"
             width={56}
             height={56}
             className="h-11 w-11 shrink-0 md:h-14 md:w-14"
             decoding="async"
           />
-          <span className="text-[15px] font-medium tracking-wide text-white md:text-base">
+          {/* Visually hide under 640px (one-row nav); keep for SR via sr-only */}
+          <span className="sr-only sm:not-sr-only sm:inline sm:text-[15px] sm:font-medium sm:tracking-wide sm:text-white md:text-base">
             Five Borough Boarders
           </span>
         </Link>

@@ -382,3 +382,57 @@ The shop is fully built and tested but **not public at launch**.
 - Mobile first: test every page at 375px wide.
 - Ask before adding any dependency not listed in section 2.
 - Out of scope for v1: native app, DMs between members, cart with multiple items, paid memberships, live lift/trail data.
+
+## 19. SEO and AI search
+
+Reusable helpers so every public page gets consistent metadata, crawl rules, and structured data. Brand name is always **Five Borough Boarders**. Exactly one `H1` per page. Meaningful `alt` on every image.
+
+### 19.1 `lib/seo.ts`
+
+`buildMetadata({ title, description, path, image? })` returns Next.js `Metadata` with:
+
+- `metadataBase` from `NEXT_PUBLIC_SITE_URL`
+- Canonical URL for `path`
+- Open Graph + Twitter card (default image `/brand/logo-badge-1024.png`)
+- Title template `"%s | Five Borough Boarders"` (root layout); page titles pass the page-specific segment
+- On non-production (`VERCEL_ENV !== "production"`): `robots: { index: false, follow: false }` and a matching `<meta name="robots" content="noindex,nofollow">`
+
+Use `buildMetadata` on every page (static export or `generateMetadata`).
+
+Root layout defaults:
+
+- Title template `%s | Five Borough Boarders`
+- Default description: `Five Borough Boarders is a NYC snowboarding community helping riders in all five boroughs cut travel costs, share rides and make new friends.`
+
+### 19.2 `robots.ts`
+
+- If `VERCEL_ENV !== "production"`: disallow all user agents.
+- Production: allow all agents, and explicitly allow `GPTBot`, `ClaudeBot`, `PerplexityBot`, and `Google-Extended`. Disallow `/admin`, `/api`, `/profile`, `/rides`, and `/shop` while `SHOP_ENABLED` is false. Link the sitemap.
+
+### 19.3 `sitemap.ts`
+
+Static public routes (`/`, `/board`, `/crew`, `/join`, `/faq`, and `/trips` when it exists) + every active mountain + published upcoming events, with `lastModified`. Exclude shop routes when `SHOP_ENABLED` is false and all member-only / admin routes.
+
+### 19.4 JSON-LD (`components/seo/JsonLd.tsx`)
+
+Render `<script type="application/ld+json">` via a small `JsonLd` component.
+
+- **Root layout:** `Organization` (name, url, logo, `sameAs: ["https://www.instagram.com/5boroughboarders"]`) + `WebSite`.
+- **`/mountains/[slug]`:** `SkiResort` (name, geo lat/lon, url = resort website) + `BreadcrumbList` (Home → Board → Mountain).
+- **`/trips` (when it exists):** one `Event` per upcoming trip (`name`, `startDate`, `location`, `offers.url` = Partiful link). Helpers live in `lib/seo.ts` so Phase 3 can plug them in.
+- **`/faq`:** `FAQPage`.
+
+### 19.5 Mountain pages (SSR text)
+
+- `H1`: `<Mountain name> snow forecast this weekend`
+- Server-render score, label, reasons, Fri/Sat/Sun forecast, and “Updated X ago” as plain HTML text (not client-only).
+- Title: `<Mountain> Snow Forecast This Weekend`
+- Description includes the current score and top reason.
+
+### 19.6 `public/llms.txt`
+
+Plain-language summary for AI crawlers (under 60 lines): mission, who it’s for, NYC focus, what each section does, how the snow score works in two sentences, and absolute links to key pages.
+
+### 19.7 `/faq`
+
+Public FAQ linked from the footer, with `FAQPage` JSON-LD. Friendly 2–4 sentence answers grounded in this plan. Mark any answer that needs owner-confirmed facts (prices, specific bus/train options) with a `TODO` comment instead of guessing.

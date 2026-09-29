@@ -1,10 +1,20 @@
+import type { Metadata } from "next";
 import Link from "next/link";
 import { BoardMapDynamic } from "@/components/board/board-map-dynamic";
 import { MountainRankList } from "@/components/board/mountain-rank-list";
+import { SiteFooter } from "@/components/site-footer";
 import { SiteHeader } from "@/components/site-header";
 import { DISCLAIMER, formatUpdatedAgo, getWeekendScores } from "@/lib/snow";
+import { buildMetadata } from "@/lib/seo";
 
 export const dynamic = "force-dynamic";
+
+export const metadata: Metadata = buildMetadata({
+  title: "Snow Board",
+  description:
+    "Weekend snow scores for the mountains NYC riders go to — map pins and a ranked list from Five Borough Boarders.",
+  path: "/board",
+});
 
 export default async function BoardPage() {
   const payload = await getWeekendScores();
@@ -40,6 +50,7 @@ export default async function BoardPage() {
           </p>
         </aside>
       </div>
+      <SiteFooter />
     </div>
   );
 }
