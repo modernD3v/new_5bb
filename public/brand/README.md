@@ -1,4 +1,6 @@
-# Brand assets live here.
-# Drop the circular black/white snowboarder-over-skyline logo as:
-#   /public/brand/logo.svg  (or .png)
-# Referenced once Phase 1+ UI lands.
+# Brand assets
+
+- `logo-badge.svg` — circular black/white badge (nav). Replace with the
+  final owner-supplied mark when available; keep the same filename/path.
+- Hero photos live in `/public/images/` (`hero-desktop` / `hero-mobile`,
+  `.webp` + `.jpg`). Current hero: Esther Höfling via Pexels.
