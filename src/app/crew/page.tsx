@@ -1,12 +1,15 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { SiteFooter } from "@/components/site-footer";
 import { SiteHeader } from "@/components/site-header";
+import { buildMetadata } from "@/lib/seo";
 
-export const metadata: Metadata = {
-  title: "Crew · Five Borough Boarders",
+export const metadata: Metadata = buildMetadata({
+  title: "Crew",
   description:
-    "Helping the snowboarding community in the 5 boroughs of NYC cut costs on travel and make new friends.",
-};
+    "About Five Borough Boarders — a NYC snowboarding community helping riders in all five boroughs cut travel costs and make new friends.",
+  path: "/crew",
+});
 
 export default function CrewPage() {
   return (
@@ -75,8 +78,13 @@ export default function CrewPage() {
           <Link href="/board" className="text-[#7DD3FC] hover:underline">
             This weekend&apos;s snow
           </Link>
+          {" · "}
+          <Link href="/faq" className="text-[#7DD3FC] hover:underline">
+            FAQ
+          </Link>
         </p>
       </main>
+      <SiteFooter />
     </>
   );
 }

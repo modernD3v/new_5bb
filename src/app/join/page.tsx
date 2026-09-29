@@ -1,11 +1,15 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { SiteFooter } from "@/components/site-footer";
 import { SiteHeader } from "@/components/site-header";
+import { buildMetadata } from "@/lib/seo";
 
-export const metadata: Metadata = {
-  title: "Join · Five Borough Boarders",
-  description: "Join the Five Borough Boarders email list.",
-};
+export const metadata: Metadata = buildMetadata({
+  title: "Join",
+  description:
+    "Join the Five Borough Boarders email list — NYC snowboarding community updates without relying on Instagram alone.",
+  path: "/join",
+});
 
 export default function JoinPage() {
   return (
@@ -36,6 +40,7 @@ export default function JoinPage() {
           </Link>
         </div>
       </main>
+      <SiteFooter />
     </>
   );
 }

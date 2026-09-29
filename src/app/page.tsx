@@ -1,5 +1,16 @@
+import type { Metadata } from "next";
 import { HomeHero } from "@/components/home-hero";
+import { SiteFooter } from "@/components/site-footer";
 import { SiteHeader } from "@/components/site-header";
+import { DEFAULT_DESCRIPTION, SITE_NAME, buildMetadata } from "@/lib/seo";
+
+export const metadata: Metadata = buildMetadata({
+  title: SITE_NAME,
+  description: DEFAULT_DESCRIPTION,
+  path: "/",
+  absoluteTitle: true,
+  image: "/images/hero-desktop-1920.jpg",
+});
 
 export default function Home() {
   return (
@@ -17,6 +28,7 @@ export default function Home() {
       <main className="flex flex-1 flex-col">
         <HomeHero />
       </main>
+      <SiteFooter />
     </>
   );
 }
