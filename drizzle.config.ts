@@ -20,7 +20,7 @@ const isMigrateCommand = process.argv.some((arg) => arg === "migrate");
 if (isMigrateCommand && !configuredUrl) {
   throw new Error(
     "Missing DATABASE_URL_UNPOOLED (preferred) or DATABASE_URL. " +
-      "On Cursor Cloud, set both as environment secrets pointing at the Neon \"dev\" branch. " +
+      "On Cursor Cloud / Vercel, set both as environment secrets pointing at the intended Neon branch. " +
       "Never commit connection strings.",
   );
 }
