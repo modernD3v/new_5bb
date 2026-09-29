@@ -19,7 +19,6 @@ export function HomeHero() {
           srcSet="/images/hero-mobile.jpg"
         />
         <source type="image/webp" srcSet="/images/hero-desktop.webp" />
-        {/* eslint-disable-next-line @next/next/no-img-element -- art-directed <picture> with priority fetch */}
         <img
           src="/images/hero-desktop.jpg"
           alt="Snowboarder catching air over alpine terrain"
