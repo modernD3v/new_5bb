@@ -119,7 +119,7 @@
 
 @layer base {
   * {
-    @apply border-border outline-ring/50;
+    @apply border-border;
   }
   body {
     @apply bg-background text-foreground;
@@ -127,7 +127,17 @@
   html {
     @apply font-sans;
   }
+
+  /* Keyboard-only focus rings — no outline after mouse/touch click */
+  :focus:not(:focus-visible) {
+    outline: none;
+  }
+  :focus-visible {
+    outline: 2px solid #7dd3fc;
+    outline-offset: 2px;
+  }
 }
+
 
 @keyframes hero-zoom {
   from {
