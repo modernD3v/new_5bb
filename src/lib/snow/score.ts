@@ -38,7 +38,7 @@ export function indoorScore(): IndoorScoreResult {
   return {
     score: null,
     label: "Indoor: always on",
-    reasons: ["Indoor snow — open year-round"],
+    reasons: ["Indoor snow, open year-round"],
   };
 }
 

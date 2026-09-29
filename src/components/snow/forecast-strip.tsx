@@ -35,11 +35,11 @@ export function ForecastStrip({ days }: { days: DayForecastSummary[] }) {
           <div className="mt-1 text-xs text-zinc-300">
             {d.highF != null && d.lowF != null
               ? `${Math.round(d.highF)}° / ${Math.round(d.lowF)}°`
-              : "—"}
+              : "n/a"}
           </div>
           <div className="text-xs text-zinc-500">
             Gust{" "}
-            {d.maxGustMph != null ? `${Math.round(d.maxGustMph)} mph` : "—"}
+            {d.maxGustMph != null ? `${Math.round(d.maxGustMph)} mph` : "n/a"}
           </div>
         </div>
       ))}

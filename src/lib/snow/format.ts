@@ -1,3 +1,4 @@
+import type { SeasonStatus } from "@/lib/season/status";
 import { SCORE_COLORS } from "./config";
 
 export function scoreColor(score: number | null, isIndoor: boolean): string {
@@ -6,6 +7,16 @@ export function scoreColor(score: number | null, isIndoor: boolean): string {
   if (score >= 6) return SCORE_COLORS.solid;
   if (score >= 4) return SCORE_COLORS.meh;
   return SCORE_COLORS.skip;
+}
+
+/** Pin / badge color, gray when the mountain is out of season. */
+export function mountainDisplayColor(m: {
+  score: number | null;
+  isIndoor: boolean;
+  season: SeasonStatus;
+}): string {
+  if (!m.isIndoor && m.season.state !== "open") return SCORE_COLORS.offseason;
+  return scoreColor(m.score, m.isIndoor);
 }
 
 export function formatUpdatedAgo(computedAt: Date | null, now = new Date()): string {
