@@ -52,11 +52,31 @@ function pinIcon(m: MountainScoreRow) {
 
 function FitBounds({ points }: { points: [number, number][] }) {
   const map = useMap();
+
   useEffect(() => {
     if (points.length === 0) return;
-    const bounds = L.latLngBounds(points.map(([lat, lon]) => [lat, lon]));
-    map.fitBounds(bounds.pad(0.15), { maxZoom: 10 });
+    const bounds = L.latLngBounds(points.map(([lat, lon]) => [lat, lon])).pad(
+      0.15,
+    );
+    const fit = () => {
+      // The container can grow after Leaflet first measures it (flex layout),
+      // and fitBounds against a stale size lands off-center.
+      map.invalidateSize({ pan: false });
+      map.fitBounds(bounds, { maxZoom: 10 });
+    };
+    fit();
+
+    let last = map.getContainer().getBoundingClientRect();
+    const observer = new ResizeObserver(() => {
+      const next = map.getContainer().getBoundingClientRect();
+      if (next.width === last.width && next.height === last.height) return;
+      last = next;
+      fit();
+    });
+    observer.observe(map.getContainer());
+    return () => observer.disconnect();
   }, [map, points]);
+
   return null;
 }
 

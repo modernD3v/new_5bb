@@ -10,14 +10,20 @@ import {
 
 function PassBadge({ info }: { info: MountainPassInfo }) {
   const [open, setOpen] = useState(false);
+  const [hovered, setHovered] = useState(false);
   const tooltipId = useId();
   const label = PASS_LABELS[info.pass];
+  const showNote = open || hovered;
 
   return (
-    <span className="group relative inline-flex">
+    <span
+      className="relative inline-flex"
+      onMouseEnter={() => setHovered(true)}
+      onMouseLeave={() => setHovered(false)}
+    >
       <button
         type="button"
-        aria-expanded={info.tierNote ? open : undefined}
+        aria-expanded={info.tierNote ? showNote : undefined}
         aria-describedby={info.tierNote ? tooltipId : undefined}
         aria-label={`${label} pass${info.tierNote ? `: ${info.tierNote}` : ""}`}
         onClick={(e) => {
@@ -35,7 +41,7 @@ function PassBadge({ info }: { info: MountainPassInfo }) {
         <span
           role="tooltip"
           id={tooltipId}
-          className={`absolute top-full left-0 z-[1000] mt-1 w-max max-w-[220px] rounded-md bg-zinc-900 px-2 py-1 text-[11px] leading-snug font-normal text-white shadow-lg ring-1 ring-zinc-700 group-hover:block ${open ? "block" : "hidden"}`}
+          className={`absolute top-full left-0 z-[1000] mt-1 w-max max-w-[220px] rounded-md bg-zinc-900 px-2 py-1 text-[11px] leading-snug font-normal text-white shadow-lg ring-1 ring-zinc-700 ${showNote ? "block" : "hidden"}`}
         >
           {info.tierNote}
         </span>
