@@ -77,7 +77,7 @@ Create a `.env.example` with these keys. Never commit real values.
 | `/shop`, `/shop/[slug]`, `/shop/success` | Merch | Public |
 | `/crew` | About, founder story, rider spotlights, collab/sponsor contact form | Public |
 | `/join` | Email signup | Public |
-| `/profile` | Edit handle, home borough, Instagram handle, avatar | Members |
+| `/profile` | Edit handle, home borough, Instagram handle, avatar, my passes (Epic / Ikon / Indy) | Members |
 | `/admin` | Manage events, products, mountains, moderation queue | Admin |
 | `/api/stripe/webhook` | Stripe events | Stripe signature |
 
@@ -91,7 +91,11 @@ Include the standard Auth.js tables (`users`, `accounts`, `sessions`, `verificat
 
 App tables:
 
-**mountains**: `id`, `slug` (unique), `name`, `state`, `lat`, `lon`, `summit_elev_ft`, `base_elev_ft`, `is_indoor` (bool), `website_url`, `drive_note` (e.g. "about 2.5 hrs from Midtown"), `active` (bool)
+**mountains**: `id`, `slug` (unique), `name`, `state`, `lat`, `lon`, `summit_elev_ft`, `base_elev_ft`, `is_indoor` (bool), `website_url`, `drive_note` (e.g. "about 2.5 hrs from Midtown"), `active` (bool), `opening_date` (nullable date, current season), `closing_date` (nullable date, current season)
+
+**mountain_passes**: `id`, `mountain_id`, `pass` (enum: epic, ikon, indy), `tier_note` (text, e.g. "Ikon: 7 days, Base: 5 days"), `season` (text, "2026-27"), `source_url`, `verified_at` (date). Unique on (`mountain_id`, `pass`, `season`). A mountain with no row for the season is "No major pass". See section 8.1.
+
+**seed_runs**: `key` (text primary key), `applied_at`. Marks one-shot seed steps (e.g. `mountain_passes:2026-27`) so the build-time seed never re-adds data an admin changed.
 
 **refresh_locks**: `key` (text primary key), `locked_until` (timestamptz)
 
@@ -133,6 +137,25 @@ Seed these 10. **Verify every coordinate and elevation against the resort's offi
 | stratton | Stratton Mountain | VT | 43.1134 | -72.9081 | no |
 | killington | Killington | VT | 43.6045 | -72.8201 | no |
 | big-snow | Big Snow American Dream | NJ | 40.8090 | -74.0700 | yes |
+
+Added with the pass filter (section 8.1), verified the same way (sources in `src/lib/db/seed-data.ts`):
+
+| slug | name | state | lat | lon | summit / base ft | pass (2026-27) |
+|---|---|---|---|---|---|---|
+| shawnee | Shawnee Mountain | PA | 41.04083 | -75.08333 | 1,350 / 650 | Indy |
+| bear-creek | Bear Creek Mountain Resort | PA | 40.47467 | -75.62947 | 1,100 / 590 | Indy |
+| montage | Montage Mountain | PA | 41.3533 | -75.6592 | 1,960 / 960 | Indy |
+| catamount | Catamount Mountain Resort | MA/NY | 42.171457 | -73.477764 | 2,000 / 1,000 | Indy |
+| mohawk | Mohawk Mountain | CT | 41.83562 | -73.3113 | 1,600 / 950 | Indy |
+| magic | Magic Mountain | VT | 43.19548 | -72.76402 | 2,850 / 1,350 | Indy |
+| jack-frost | Jack Frost | PA | 41.11036 | -75.65192 | 2,000 / 1,400 | Epic |
+| big-boulder | Big Boulder | PA | 41.04665 | -75.59976 | 2,175 / 1,700 | Epic |
+| okemo | Okemo | VT | 43.40139 | -72.71667 | 3,344 / 1,144 | Epic |
+| jiminy-peak | Jiminy Peak | MA | 42.55083 | -73.29083 | 2,375 / 1,245 | Ikon (bonus) |
+
+Epic lists Jack Frost and Big Boulder as two resorts, so they are two rows.
+
+The seed upserts mountains on `slug` (idempotent, runs on every build) and inserts the season's `mountain_passes` rows once (tracked in `seed_runs`). It never writes `opening_date` / `closing_date`.
 
 Admins can add more mountains from `/admin` later.
 
@@ -246,9 +269,37 @@ Show under every score: "Forecast-based score. Doesn't know trail counts or base
 - Below or beside the map: list of mountains ranked by score (list view is the accessible fallback).
 - Map component loads with `next/dynamic` and `ssr: false`; show a skeleton while loading.
 
+### 8.1 Ski pass filter
+
+Riders pick mountains by the pass in their pocket. Pass access changes every season, so it lives in the database (`mountain_passes`), not in code.
+
+- **Chips above the map:** All · Epic · Ikon · Indy · No pass. Multi-select (someone may hold Ikon + Indy). "All" clears the others; turning every chip on, or the last chip off, is the same as All. Each chip shows its mountain count.
+- **Matching:** a mountain shows if it has any selected pass, or if it has no pass rows and "No pass" is selected. Filtered-out mountains are hidden on the map and in the ranked list, and the map re-fits its bounds to the visible pins.
+- **Badges:** every pin popup and list row shows small Epic / Ikon / Indy badges. Hover or tap a badge to see its `tier_note`. Rows with no pass say "No major pass".
+- **Remembering the choice:** the selection is in the URL (`?pass=ikon,indy`) so links are shareable, and in `localStorage` (wrapped in try/catch) as the default next visit. Precedence: URL, then the member's "My passes", then `localStorage`, then All. `?pass=all` forces All.
+- **My passes (Phase 2):** members get a "My passes" profile field that becomes their default filter. Auth doesn't exist yet, so this is a TODO in `BoardExplorer` (`memberPasses` in `resolveInitialPassSelection` is already wired).
+- **Disclaimer on the board:** "Pass info for the 2026-27 season. Always confirm with the pass before you go." with links to the official Epic, Ikon and Indy resort pages. The season label comes from the data (see below).
+- **Which season:** seasons roll over on Jul 1 (Sep 2026 is "2026-27"). The board shows the current season's rows; if none exist yet (early July before an admin enters them), it falls back to the latest earlier season.
+- **Admin:** `/admin/mountains` edits each mountain's passes, tier notes, source URLs, verified dates and opening/closing dates. "Start <season> from <previous> passes" copies last season's rows with `verified_at` cleared so each one gets re-checked. Until Auth.js roles exist, `/admin` is gated by HTTP Basic auth against `ADMIN_PASSWORD` (any username; unset = 404), checked in `src/proxy.ts` and again inside every Server Action.
+- **Verification rule:** every pass row is checked against the official pass site before it's saved, with that page in `source_url` and the date in `verified_at`.
+- Pure logic lives in `lib/passes/filter.ts` and is unit tested.
+
+### 8.2 Off-season state
+
+No numeric score when the mountain isn't open. Pure logic in `lib/season/status.ts`, unit tested, dates in `America/New_York`.
+
+- **Preseason:** today is before `opening_date`, or `opening_date` is null and it's before Nov 15. Pin is gray with "Opens Nov 21" (or "Preseason" with no date). Mountain page: "Season hasn't started. Scores start when <Mountain> opens."
+- **Closed:** today is after `closing_date`, or `closing_date` is null and it's after Apr 30. Pin is gray with "Closed". Mountain page: "Season's over. See you next winter."
+- Dates from an earlier season (before Jul 1 of the current one) are ignored, so last April's closing date doesn't read as "Season's over" in October.
+- Indoor mountains (Big Snow) are always open.
+- The ranked list puts open, scored mountains first, then the rest by name. Scores are still computed in the background; the UI just doesn't show them.
+
 ## 9. Mountain page (`/mountains/[slug]`)
 
-- Header: name, state, drive note, big score badge, label, all reasons, "Updated X ago".
+- Header: name, state, drive note, big score badge, label, all reasons, "Updated X ago". Off-season: gray badge and the section 8.2 copy instead of a score.
+- Under the score: pass badges, tier notes, source links and "Verified <date>", server-rendered with a plain sentence ("Hunter Mountain is on the Epic Pass for the 2026-27 season.") so pass info is in the HTML for search.
+- JSON-LD (`SkiResort`) and the meta description use a stable sentence, "Weekend snow score and forecast for <Mountain>, <State>.", never the live score.
+- Copy rule for the whole site: no em dashes.
 - Forecast strip: Fri, Sat, Sun with snow, rain, high/low, max gust.
 - **Who's going:** avatars and handles grouped by Saturday and Sunday. Members tap "I'm going Sat" or "I'm going Sun" (toggle). Optional note ("Leaving Williamsburg 5am, 2 seats").
 - CTA next to check-in: "Driving? Offer a ride" links to `/rides/new?mountain=slug&date=...`. "Need a ride?" links to filtered `/rides`.
@@ -332,6 +383,7 @@ The shop is fully built and tested but **not public at launch**.
 
 ### Phase 2: Members + community
 - Auth.js, onboarding, profiles, check-ins, posts, comments, image upload, reports, admin moderation.
+- Profile field "My passes" (epic / ikon / indy) used as the member's default `/board` filter (section 8.1). Replace the `ADMIN_PASSWORD` gate with `role = admin`.
 - **Done when:** a member can check in to Hunter for Saturday, post a photo, another member can comment, and admin can hide it.
 
 ### Phase 3: Trips + Catch a Ride
