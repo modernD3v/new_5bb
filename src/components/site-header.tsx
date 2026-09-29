@@ -1,4 +1,3 @@
-import Image from "next/image";
 import Link from "next/link";
 
 const links = [
@@ -16,20 +15,22 @@ export function SiteHeader({ transparent = false }: { transparent?: boolean }) {
           : "border-b border-zinc-800 bg-[#0A0A0A]"
       }
     >
-      <div className="mx-auto flex h-14 max-w-6xl items-center justify-between gap-4 px-4 sm:h-16 sm:px-6">
+      <div className="mx-auto flex min-h-14 max-w-6xl items-center justify-between gap-4 px-4 py-2 sm:min-h-16 sm:px-6 md:min-h-[4.5rem]">
         <Link
           href="/"
-          className="flex items-center gap-2.5 rounded-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-sky-300"
+          className="flex items-center gap-3 rounded-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#7DD3FC]"
         >
-          <Image
+          {/* Real traced badge — plain img avoids next/image re-encode of SVG */}
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
             src="/brand/logo-badge.svg"
-            alt="Five Borough Boarders"
-            width={40}
-            height={40}
-            priority
-            className="size-9 sm:size-10"
+            alt=""
+            width={56}
+            height={56}
+            className="h-11 w-11 shrink-0 md:h-14 md:w-14"
+            decoding="async"
           />
-          <span className="sr-only sm:not-sr-only sm:text-sm sm:font-semibold sm:tracking-wide sm:text-white">
+          <span className="text-[15px] font-medium tracking-wide text-white md:text-base">
             Five Borough Boarders
           </span>
         </Link>
@@ -38,7 +39,7 @@ export function SiteHeader({ transparent = false }: { transparent?: boolean }) {
             <Link
               key={link.href}
               href={link.href}
-              className="rounded-md px-2.5 py-1.5 text-sm font-medium text-white/90 transition hover:bg-white/10 hover:text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-sky-300"
+              className="rounded-md px-2.5 py-1.5 text-[15px] font-medium text-white transition hover:bg-white/10 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#7DD3FC]"
             >
               {link.label}
             </Link>

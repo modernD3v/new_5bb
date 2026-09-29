@@ -1,6 +1,5 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
-import { Bebas_Neue } from "next/font/google";
+import { Geist, Geist_Mono, Bebas_Neue } from "next/font/google";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -23,6 +22,14 @@ export const metadata: Metadata = {
   title: "Five Borough Boarders",
   description:
     "Helping the snowboarding community in the 5 boroughs of NYC cut costs on travel and make new friends.",
+  icons: {
+    icon: [{ url: "/favicon.ico" }],
+    apple: [{ url: "/apple-icon.png" }],
+  },
+};
+
+export const viewport = {
+  themeColor: "#0A0A0A",
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
