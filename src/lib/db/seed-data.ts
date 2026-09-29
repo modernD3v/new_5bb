@@ -71,7 +71,65 @@
  * - Elev: PeakRankings top elev 446 ft; Wikipedia vertical 160 ft → base 286 ft
  *   https://www.peakrankings.com/content/big-snow-american-dream
  *   Scoring skips indoor mountains; elevations are for map/context only.
+ *
+ * Added with the pass filter (checked 2026-09-29). Indy summit/base figures
+ * are from each resort's Indy Pass page (indyskipass.com/our-resorts/<slug>)
+ * and match Wikipedia.
+ *
+ * Shawnee Mountain (PA)
+ * - Coords: Wikipedia — 41.04083, -75.08333
+ *   https://en.wikipedia.org/wiki/Shawnee_Mountain_Ski_Area
+ *   (OSM Summit Lodge way 280049911 41.03384, -75.07247 also checked.)
+ * - Elev: Indy Pass — summit 1,350 ft, base 650 ft (vertical 700 ft)
+ *
+ * Bear Creek Mountain Resort (PA)
+ * - Coords: OSM landuse=winter_sports way 281594168 — 40.47467, -75.62947
+ *   (Wikipedia 40.47611, -75.62583 also checked.)
+ * - Elev: Indy Pass / Wikipedia — summit 1,100 ft, base 590 ft
+ * - Site: bcmr.com now redirects to bcmountainresort.com
+ *
+ * Montage Mountain (PA)
+ * - Coords: Wikipedia — 41.3533, -75.6592
+ *   https://en.wikipedia.org/wiki/Montage_Mountain_Ski_Resort
+ * - Elev: Indy Pass / Wikipedia — summit 1,960 ft, base 960 ft
+ *
+ * Catamount Mountain Resort (MA/NY border)
+ * - Coords: Wikipedia — 42.171457, -73.477764
+ *   https://en.wikipedia.org/wiki/Catamount_Mountain_Resort
+ *   (OSM winter_sports way 1176086204 42.16559, -73.47729 also checked.)
+ * - Elev: Indy Pass — summit 2,000 ft, base 1,000 ft
+ *
+ * Mohawk Mountain (CT)
+ * - Coords: OSM landuse=winter_sports way 68519530 — 41.83562, -73.3113
+ *   (Wikipedia 41.83675, -73.31342 also checked.)
+ * - Elev: Indy Pass — summit 1,600 ft, base 950 ft
+ *
+ * Magic Mountain (VT)
+ * - Coords: OSM landuse=winter_sports way 452295412 — 43.19548, -72.76402
+ *   (Wikipedia 43.19278, -72.76 also checked.)
+ * - Elev: Indy Pass / Wikipedia — summit 2,850 ft, base 1,350 ft
+ *
+ * Jack Frost and Big Boulder (PA): Epic lists them as two resorts, so two rows.
+ * - Elev: jfbb.com mountain info — Jack Frost 2,000 / 1,400 ft,
+ *   Big Boulder 2,175 / 1,700 ft
+ *   https://www.jfbb.com/the-mountain/about-the-mountain/mountain-info.aspx
+ * - Coords: OSM Jack Frost Mountain Resort way 390163427 — 41.11036, -75.65192;
+ *   OSM Big Boulder chair lift way 96610192 — 41.04665, -75.59976
+ *
+ * Okemo (VT)
+ * - Coords: Wikipedia — 43.40139, -72.71667 (matches OSM resort node 1556607603)
+ *   https://en.wikipedia.org/wiki/Okemo_Mountain
+ * - Elev: okemo.com mountain info — summit 3,344 ft, base 1,144 ft
+ *   https://www.okemo.com/the-mountain/about-the-mountain/mountain-info.aspx
+ *
+ * Jiminy Peak (MA)
+ * - Coords: Wikipedia — 42.55083, -73.29083
+ *   https://en.wikipedia.org/wiki/Jiminy_Peak_(ski_area)
+ *   (OSM resort node 2615263418 42.55481, -73.28933 also checked.)
+ * - Elev: Wikipedia — summit 2,375 ft, base 1,245 ft (not on the resort site)
  */
+
+import type { SkiPass } from "@/lib/passes/config";
 
 export type MountainSeed = {
   slug: string;
@@ -218,4 +276,186 @@ export const MOUNTAIN_SEEDS: MountainSeed[] = [
     driveNote: "About 30–45 min from Midtown",
     active: true,
   },
+  {
+    slug: "shawnee",
+    name: "Shawnee Mountain",
+    state: "PA",
+    lat: 41.04083,
+    lon: -75.08333,
+    summitElevFt: 1350,
+    baseElevFt: 650,
+    isIndoor: false,
+    websiteUrl: "https://www.shawneemt.com",
+    driveNote: "About 1.5 hrs from Midtown",
+    active: true,
+  },
+  {
+    slug: "bear-creek",
+    name: "Bear Creek Mountain Resort",
+    state: "PA",
+    lat: 40.47467,
+    lon: -75.62947,
+    summitElevFt: 1100,
+    baseElevFt: 590,
+    isIndoor: false,
+    websiteUrl: "https://www.bcmountainresort.com",
+    driveNote: "About 2 hrs from Midtown",
+    active: true,
+  },
+  {
+    slug: "montage",
+    name: "Montage Mountain",
+    state: "PA",
+    lat: 41.3533,
+    lon: -75.6592,
+    summitElevFt: 1960,
+    baseElevFt: 960,
+    isIndoor: false,
+    websiteUrl: "https://www.montagemountainresorts.com",
+    driveNote: "About 2 hrs from Midtown",
+    active: true,
+  },
+  {
+    slug: "catamount",
+    name: "Catamount Mountain Resort",
+    state: "MA/NY",
+    lat: 42.171457,
+    lon: -73.477764,
+    summitElevFt: 2000,
+    baseElevFt: 1000,
+    isIndoor: false,
+    websiteUrl: "https://catamountski.com",
+    driveNote: "About 2.5 hrs from Midtown",
+    active: true,
+  },
+  {
+    slug: "mohawk",
+    name: "Mohawk Mountain",
+    state: "CT",
+    lat: 41.83562,
+    lon: -73.3113,
+    summitElevFt: 1600,
+    baseElevFt: 950,
+    isIndoor: false,
+    websiteUrl: "https://www.mohawkmtn.com",
+    driveNote: "About 2–2.5 hrs from Midtown",
+    active: true,
+  },
+  {
+    slug: "magic",
+    name: "Magic Mountain",
+    state: "VT",
+    lat: 43.19548,
+    lon: -72.76402,
+    summitElevFt: 2850,
+    baseElevFt: 1350,
+    isIndoor: false,
+    websiteUrl: "https://www.magicmtn.com",
+    driveNote: "About 4 hrs from Midtown",
+    active: true,
+  },
+  {
+    slug: "jack-frost",
+    name: "Jack Frost",
+    state: "PA",
+    lat: 41.11036,
+    lon: -75.65192,
+    summitElevFt: 2000,
+    baseElevFt: 1400,
+    isIndoor: false,
+    websiteUrl: "https://www.jfbb.com",
+    driveNote: "About 2 hrs from Midtown",
+    active: true,
+  },
+  {
+    slug: "big-boulder",
+    name: "Big Boulder",
+    state: "PA",
+    lat: 41.04665,
+    lon: -75.59976,
+    summitElevFt: 2175,
+    baseElevFt: 1700,
+    isIndoor: false,
+    websiteUrl: "https://www.jfbb.com",
+    driveNote: "About 2 hrs from Midtown",
+    active: true,
+  },
+  {
+    slug: "okemo",
+    name: "Okemo",
+    state: "VT",
+    lat: 43.40139,
+    lon: -72.71667,
+    summitElevFt: 3344,
+    baseElevFt: 1144,
+    isIndoor: false,
+    websiteUrl: "https://www.okemo.com",
+    driveNote: "About 4.5 hrs from Midtown",
+    active: true,
+  },
+  {
+    slug: "jiminy-peak",
+    name: "Jiminy Peak",
+    state: "MA",
+    lat: 42.55083,
+    lon: -73.29083,
+    summitElevFt: 2375,
+    baseElevFt: 1245,
+    isIndoor: false,
+    websiteUrl: "https://www.jiminypeak.com",
+    driveNote: "About 3.5 hrs from Midtown",
+    active: true,
+  },
+];
+
+export const PASS_SEED_SEASON = "2026-27";
+export const PASS_SEED_VERIFIED_AT = "2026-09-29";
+
+export type PassSeed = {
+  slug: string;
+  pass: SkiPass;
+  tierNote: string;
+  sourceUrl: string;
+};
+
+const EPIC_SOURCE = "https://www.epicpass.com/passes/epic-pass.aspx";
+const IKON_SOURCE = "https://www.ikonpass.com/en/compare-passes";
+const IKON_BONUS_SOURCE = "https://www.ikonpass.com/en/benefits/bonus-mountains";
+const INDY_NOTE = "2 days per season";
+const indySource = (resortSlug: string) =>
+  `https://www.indyskipass.com/our-resorts/${resortSlug}`;
+
+/**
+ * 2026-27 pass access, verified 2026-09-29 against the official pass sites.
+ * Mountains with no rows here are "No major pass": windham, belleayre,
+ * mountain-creek, big-snow (none appear on the Epic, Ikon or Indy lists).
+ *
+ * - Epic: epicpass.com Epic Pass "Resort Access ... 2026/27 season" lists
+ *   Hunter, Mount Snow, Okemo, Jack Frost and Big Boulder (separately).
+ * - Ikon: ikonpass.com "Compare 26/27 Ikon Pass Access" table. Killington-Pico
+ *   days are combined across both mountains. Blue Mountain Resort, PA is on
+ *   26/27 Ikon (the ikonpass.com "blue-mountain" page is Blue Mountain, Ontario).
+ *   Jiminy Peak is on the 26/27 Bonus Mountains list (full Ikon Pass only,
+ *   with blackout dates).
+ * - Indy: each resort is listed on indyskipass.com/our-resorts. The resort
+ *   pages don't print a season label, and Mohawk, Montage and Shawnee show
+ *   blackout dates for the base Indy Pass.
+ */
+export const PASS_SEEDS: PassSeed[] = [
+  { slug: "hunter", pass: "epic", tierNote: "Epic Pass: unlimited", sourceUrl: EPIC_SOURCE },
+  { slug: "mount-snow", pass: "epic", tierNote: "Epic Pass: unlimited", sourceUrl: EPIC_SOURCE },
+  { slug: "okemo", pass: "epic", tierNote: "Epic Pass: unlimited", sourceUrl: EPIC_SOURCE },
+  { slug: "jack-frost", pass: "epic", tierNote: "Epic Pass: unlimited", sourceUrl: EPIC_SOURCE },
+  { slug: "big-boulder", pass: "epic", tierNote: "Epic Pass: unlimited", sourceUrl: EPIC_SOURCE },
+  { slug: "killington", pass: "ikon", tierNote: "Ikon: 7 days, Base: 5 days", sourceUrl: IKON_SOURCE },
+  { slug: "stratton", pass: "ikon", tierNote: "Ikon: unlimited, Base: unlimited with blackouts", sourceUrl: IKON_SOURCE },
+  { slug: "camelback", pass: "ikon", tierNote: "Ikon: 7 days, Base: 5 days", sourceUrl: IKON_SOURCE },
+  { slug: "blue-mountain", pass: "ikon", tierNote: "Ikon: 7 days, Base: 5 days", sourceUrl: IKON_SOURCE },
+  { slug: "jiminy-peak", pass: "ikon", tierNote: "Bonus mountain: 2 days, full Ikon Pass only", sourceUrl: IKON_BONUS_SOURCE },
+  { slug: "shawnee", pass: "indy", tierNote: INDY_NOTE, sourceUrl: indySource("shawnee-mountain-ski-area") },
+  { slug: "bear-creek", pass: "indy", tierNote: INDY_NOTE, sourceUrl: indySource("bear-creek") },
+  { slug: "montage", pass: "indy", tierNote: INDY_NOTE, sourceUrl: indySource("montage-mountain") },
+  { slug: "catamount", pass: "indy", tierNote: INDY_NOTE, sourceUrl: indySource("catamount-mountain-resort") },
+  { slug: "mohawk", pass: "indy", tierNote: INDY_NOTE, sourceUrl: indySource("mohawk-mountain") },
+  { slug: "magic", pass: "indy", tierNote: INDY_NOTE, sourceUrl: indySource("magic-mountain") },
 ];

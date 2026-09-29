@@ -21,6 +21,7 @@ export const SCORE_COLORS = {
   meh: "#F59E0B",
   skip: "#EF4444",
   indoor: "#94A3B8",
+  offseason: "#A1A1AA",
 } as const;
 
 export const DISCLAIMER =

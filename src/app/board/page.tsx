@@ -1,13 +1,15 @@
 import Link from "next/link";
-import { BoardMapDynamic } from "@/components/board/board-map-dynamic";
-import { MountainRankList } from "@/components/board/mountain-rank-list";
+import { BoardExplorer } from "@/components/board/board-explorer";
 import { SiteHeader } from "@/components/site-header";
-import { DISCLAIMER, formatUpdatedAgo, getWeekendScores } from "@/lib/snow";
+import { PASS_QUERY_PARAM } from "@/lib/passes/filter";
+import { formatUpdatedAgo, getWeekendScores } from "@/lib/snow";
 
 export const dynamic = "force-dynamic";
 
-export default async function BoardPage() {
-  const payload = await getWeekendScores();
+export default async function BoardPage({ searchParams }: PageProps<"/board">) {
+  const [payload, query] = await Promise.all([getWeekendScores(), searchParams]);
+  const rawPass = query[PASS_QUERY_PARAM];
+  const urlPassParam = Array.isArray(rawPass) ? rawPass.join(",") : (rawPass ?? null);
 
   return (
     <div className="flex min-h-screen flex-col bg-[#0a0a0a] text-white">
@@ -26,20 +28,11 @@ export default async function BoardPage() {
         </Link>
       </header>
 
-      <div className="flex flex-1 flex-col lg:flex-row">
-        <div className="h-[55vh] min-h-[320px] w-full lg:h-auto lg:flex-1">
-          <BoardMapDynamic mountains={payload.mountains} />
-        </div>
-        <aside className="w-full border-t border-zinc-800 lg:w-96 lg:border-t-0 lg:border-l">
-          <div className="border-b border-zinc-800 px-4 py-3 text-sm font-medium">
-            Ranked by weekend score
-          </div>
-          <MountainRankList mountains={payload.mountains} />
-          <p className="border-t border-zinc-800 px-4 py-3 text-xs leading-relaxed text-zinc-500">
-            {DISCLAIMER}
-          </p>
-        </aside>
-      </div>
+      <BoardExplorer
+        mountains={payload.mountains}
+        urlPassParam={urlPassParam}
+        passSeason={payload.passSeason}
+      />
     </div>
   );
 }

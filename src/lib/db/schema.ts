@@ -49,6 +49,8 @@ export const subscriberSourceEnum = pgEnum("subscriber_source", [
   "footer",
 ]);
 
+export const skiPassEnum = pgEnum("ski_pass", ["epic", "ikon", "indy"]);
+
 // --- Auth.js tables (extended users) ---
 
 export const users = pgTable("users", {
@@ -124,6 +126,40 @@ export const mountains = pgTable("mountains", {
   websiteUrl: text("website_url"),
   driveNote: text("drive_note"),
   active: boolean("active").default(true).notNull(),
+  /** Current season only. Admin-edited; the seed never overwrites these. */
+  openingDate: date("opening_date"),
+  closingDate: date("closing_date"),
+});
+
+export const mountainPasses = pgTable(
+  "mountain_passes",
+  {
+    id: uuid("id").defaultRandom().primaryKey(),
+    mountainId: uuid("mountain_id")
+      .notNull()
+      .references(() => mountains.id, { onDelete: "cascade" }),
+    pass: skiPassEnum("pass").notNull(),
+    tierNote: text("tier_note"),
+    /** e.g. "2026-27" */
+    season: text("season").notNull(),
+    sourceUrl: text("source_url"),
+    verifiedAt: date("verified_at"),
+  },
+  (t) => [
+    uniqueIndex("mountain_passes_mountain_pass_season_uidx").on(
+      t.mountainId,
+      t.pass,
+      t.season,
+    ),
+  ],
+);
+
+/** One row per one-shot seed step, so re-running the build seed never re-adds data an admin removed. */
+export const seedRuns = pgTable("seed_runs", {
+  key: text("key").primaryKey(),
+  appliedAt: timestamp("applied_at", { withTimezone: true })
+    .defaultNow()
+    .notNull(),
 });
 
 export const refreshLocks = pgTable("refresh_locks", {

@@ -24,8 +24,8 @@ export default function CrewPage() {
           on travel and make new friends.
         </p>
         <p className="mt-4 text-base leading-relaxed text-zinc-400">
-          We&apos;re a NYC snowboarding community — about 1,200 strong on
-          Instagram — organizing trips, carpools, and hangouts so riders across
+          We&apos;re a NYC snowboarding community, about 1,200 strong on
+          Instagram, organizing trips, carpools, and hangouts so riders across
           the five boroughs can get to the mountains together.
         </p>
         <p className="mt-8">
@@ -44,7 +44,7 @@ export default function CrewPage() {
             Photo credits
           </h2>
           <p className="mt-3 text-sm leading-relaxed text-zinc-400">
-            Home hero —{" "}
+            Home hero:{" "}
             <a
               href="https://www.pexels.com/photo/snowboarder-in-mid-air-at-laax-swiss-alps-30310305/"
               target="_blank"
